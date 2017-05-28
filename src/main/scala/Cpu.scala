@@ -82,7 +82,7 @@ class Cpu(val pcInit: Int) extends Module {
     is(decode) {
       when(io.instMem.err) {
         cycle := exception
-        exceptionNum := 2.U
+        exceptionNum := 1.U
 
       }.otherwise {
         when(op === OP_LUI) {
@@ -110,12 +110,18 @@ class Cpu(val pcInit: Int) extends Module {
 
 
     is(execute) {
-      aluResult := io.alu.o
+      when(io.alu.isValid) {
+        aluResult := io.alu.o
 
-      when(op === OP_LOAD || op === OP_STORE) {
-        cycle := mem_access
+        when(op === OP_LOAD || op === OP_STORE) {
+          cycle := mem_access
+        }.otherwise {
+          cycle := write
+        }
+
       }.otherwise {
-        cycle := write
+        cycle := exception
+        exceptionNum := 2.U
       }
     }
 

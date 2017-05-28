@@ -45,6 +45,7 @@ class CPU_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
     expect(cpu.io.alu.x, vec.x)
     expect(cpu.io.alu.y, vec.y)
     poke(cpu.io.alu.o, SOME_WORD)
+    poke(cpu.io.alu.isValid, true)
     // write
     step(1)
     expect(cpu.io.instMem.read, false)
@@ -117,6 +118,7 @@ class JAL_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.alu.x, cpu.pcInit)
   expect(cpu.io.alu.y, 0xFFFFFFF8L)
   poke(cpu.io.alu.o, pcNext)
+  poke(cpu.io.alu.isValid, true)
   // write
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -164,6 +166,7 @@ class JALR_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.alu.x, 0x33B)
   expect(cpu.io.alu.y, 0xFFFFFFF8L)
   poke(cpu.io.alu.o, pcNext)
+  poke(cpu.io.alu.isValid, true)
   // write
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -213,6 +216,7 @@ class BRANCH_Taken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.alu.x, 123)
   expect(cpu.io.alu.y, 456)
   poke(cpu.io.alu.o, 0x1)
+  poke(cpu.io.alu.isValid, true)
   // write
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -259,6 +263,7 @@ class BRANCH_NotTaken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.alu.x, 123)
   expect(cpu.io.alu.y, 456)
   poke(cpu.io.alu.o, 0x0)
+  poke(cpu.io.alu.isValid, true)
   // write
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -328,6 +333,7 @@ class LW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   expect(cpu.io.alu.x, 0x35C)
   expect(cpu.io.alu.y, 0xFFFFFFECL)
   poke(cpu.io.alu.o, 0x354)
+  poke(cpu.io.alu.isValid, true)
   // mem
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -383,6 +389,7 @@ class SW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   expect(cpu.io.alu.x, 0x234)
   expect(cpu.io.alu.y, 0xFFFFFFECL)
   poke(cpu.io.alu.o, 0x220)
+  poke(cpu.io.alu.isValid, true)
   // mem
   step(1)
   expect(cpu.io.instMem.read, false)
