@@ -56,7 +56,7 @@ class Cpu(val pcInit: Int) extends Module {
   io.rf.rs2 := rs2
   io.rf.rd := rd
   io.rf.wdata := aluResult
-  io.rf.wen := false.B
+  io.rf.write := false.B
 
   io.alu.op := op
   io.alu.funct3 := funct3
@@ -73,6 +73,11 @@ class Cpu(val pcInit: Int) extends Module {
   io.dataMem.write := false.B
 
   switch(cycle) {
+    is(exception) {
+      cycle := exception
+    }
+
+
     is(fetch) {
       io.instMem.read := true.B
       cycle := decode
@@ -144,7 +149,7 @@ class Cpu(val pcInit: Int) extends Module {
 
 
     is(write) {
-      when(io.dataMem.err) {  // Access error
+      when(io.dataMem.err) { // Access error
         cycle := exception
         when(op === OP_LOAD) {
           exceptionNum := 10.U
@@ -156,13 +161,13 @@ class Cpu(val pcInit: Int) extends Module {
         when(op === OP_BRANCH || op === OP_STORE) {
           // No RF write
         }.elsewhen(op === OP_LOAD) {
-          io.rf.wen := true.B
+          io.rf.write := true.B
           io.rf.wdata := io.dataMem.rdata
         }.elsewhen(op === OP_JAL || op === OP_JALR) {
-          io.rf.wen := true.B
+          io.rf.write := true.B
           io.rf.wdata := pc + 4.U
         }.otherwise {
-          io.rf.wen := true.B
+          io.rf.write := true.B
         }
 
         when(op === OP_JAL || op === OP_JALR) {

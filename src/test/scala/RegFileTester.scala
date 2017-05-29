@@ -8,17 +8,19 @@ class RegFileUnitTester(rf: RegFile) extends PeekPokeTester(rf) {
 
   poke(rf.io.rd, 0xF)
   poke(rf.io.wdata, 0x12345678)
-  poke(rf.io.wen, true)
+  poke(rf.io.write, true)
   step(1)
   poke(rf.io.rs1, 0xF)
+  poke(rf.io.write, false)
   step(1)
   expect(rf.io.r1, 0x12345678)
 
   poke(rf.io.rd, 0)
   poke(rf.io.wdata, 0x12345678)
-  poke(rf.io.wen, true)
+  poke(rf.io.write, true)
   step(1)
   poke(rf.io.rs1, 0)
+  poke(rf.io.write, false)
   step(1)
   expect(rf.io.r1, 0x0)
 }

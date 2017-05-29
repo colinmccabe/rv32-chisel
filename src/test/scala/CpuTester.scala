@@ -1,4 +1,5 @@
 import Constants._
+import TestConstants.SOME_WORD
 import chisel3.iotesters.{ChiselFlatSpec, Driver, PeekPokeTester}
 
 import scala.util.Random
@@ -24,7 +25,7 @@ class CPU_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
     expect(cpu.io.instMem.addr, cpu.pcInit)
     expect(cpu.io.dataMem.read, false)
     expect(cpu.io.dataMem.write, false)
-    expect(cpu.io.rf.wen, false)
+    expect(cpu.io.rf.write, false)
     // decode
     step(1)
     expect(cpu.io.instMem.read, false)
@@ -32,7 +33,7 @@ class CPU_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
     poke(cpu.io.instMem.err, false)
     expect(cpu.io.dataMem.read, false)
     expect(cpu.io.dataMem.write, false)
-    expect(cpu.io.rf.wen, false)
+    expect(cpu.io.rf.write, false)
     poke(cpu.io.rf.r1, vec.r1)
     poke(cpu.io.rf.r2, vec.r2)
     // execute
@@ -41,7 +42,7 @@ class CPU_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
     expect(cpu.io.instMem.read, false)
     expect(cpu.io.dataMem.read, false)
     expect(cpu.io.dataMem.write, false)
-    expect(cpu.io.rf.wen, false)
+    expect(cpu.io.rf.write, false)
     expect(cpu.io.alu.x, vec.x)
     expect(cpu.io.alu.y, vec.y)
     poke(cpu.io.alu.o, SOME_WORD)
@@ -52,7 +53,7 @@ class CPU_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
     expect(cpu.io.dataMem.read, false)
     expect(cpu.io.dataMem.write, false)
     poke(cpu.io.dataMem.err, false)
-    expect(cpu.io.rf.wen, true)
+    expect(cpu.io.rf.write, true)
     expect(cpu.io.rf.rd, vec.rf_rd)
     expect(cpu.io.rf.wdata, SOME_WORD)
     // fetch
@@ -61,7 +62,7 @@ class CPU_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
     expect(cpu.io.instMem.addr, pcNext)
     expect(cpu.io.dataMem.read, false)
     expect(cpu.io.dataMem.write, false)
-    expect(cpu.io.rf.wen, false)
+    expect(cpu.io.rf.write, false)
   }
 }
 
@@ -100,7 +101,7 @@ class JAL_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.instMem.addr, cpu.pcInit)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // decode
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -108,13 +109,13 @@ class JAL_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   poke(cpu.io.instMem.err, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // execute
   step(1)
   expect(cpu.io.instMem.read, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   expect(cpu.io.alu.x, cpu.pcInit)
   expect(cpu.io.alu.y, 0xFFFFFFF8L)
   poke(cpu.io.alu.o, pcNext)
@@ -125,7 +126,7 @@ class JAL_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
   poke(cpu.io.dataMem.err, false)
-  expect(cpu.io.rf.wen, true)
+  expect(cpu.io.rf.write, true)
   expect(cpu.io.rf.rd, 0x13)
   expect(cpu.io.rf.wdata, (cpu.pcInit + 4) & INST_ADDR_MASK)
   // fetch
@@ -134,7 +135,7 @@ class JAL_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.instMem.addr, pcNext)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
 }
 
 
@@ -146,7 +147,7 @@ class JALR_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.instMem.addr, cpu.pcInit)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // decode
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -154,7 +155,7 @@ class JALR_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   poke(cpu.io.instMem.err, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   expect(cpu.io.rf.rs1, 0x0C)
   poke(cpu.io.rf.r1, 0x33B)
   // execute
@@ -162,7 +163,7 @@ class JALR_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.instMem.read, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   expect(cpu.io.alu.x, 0x33B)
   expect(cpu.io.alu.y, 0xFFFFFFF8L)
   poke(cpu.io.alu.o, pcNext)
@@ -173,7 +174,7 @@ class JALR_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
   poke(cpu.io.dataMem.err, false)
-  expect(cpu.io.rf.wen, true)
+  expect(cpu.io.rf.write, true)
   expect(cpu.io.rf.rd, 0x7)
   expect(cpu.io.rf.wdata, (cpu.pcInit + 4) & INST_ADDR_MASK)
   // fetch
@@ -182,7 +183,7 @@ class JALR_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.instMem.addr, pcNext)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
 }
 
 
@@ -194,7 +195,7 @@ class BRANCH_Taken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.instMem.addr, cpu.pcInit)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // decode
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -202,7 +203,7 @@ class BRANCH_Taken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   poke(cpu.io.instMem.err, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   expect(cpu.io.rf.rs1, 31)
   expect(cpu.io.rf.rs2, 31)
   poke(cpu.io.rf.r1, 123)
@@ -212,7 +213,7 @@ class BRANCH_Taken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.instMem.read, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   expect(cpu.io.alu.x, 123)
   expect(cpu.io.alu.y, 456)
   poke(cpu.io.alu.o, 0x1)
@@ -223,14 +224,14 @@ class BRANCH_Taken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
   poke(cpu.io.dataMem.err, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // fetch
   step(1)
   expect(cpu.io.instMem.read, true)
   expect(cpu.io.instMem.addr, pcNext)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
 }
 
 class BRANCH_NotTaken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
@@ -241,7 +242,7 @@ class BRANCH_NotTaken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.instMem.addr, cpu.pcInit)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // decode
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -249,7 +250,7 @@ class BRANCH_NotTaken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   poke(cpu.io.instMem.err, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   expect(cpu.io.rf.rs1, 31)
   expect(cpu.io.rf.rs2, 31)
   poke(cpu.io.rf.r1, 123)
@@ -259,7 +260,7 @@ class BRANCH_NotTaken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.instMem.read, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   expect(cpu.io.alu.x, 123)
   expect(cpu.io.alu.y, 456)
   poke(cpu.io.alu.o, 0x0)
@@ -270,14 +271,14 @@ class BRANCH_NotTaken_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
   poke(cpu.io.dataMem.err, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // fetch
   step(1)
   expect(cpu.io.instMem.read, true)
   expect(cpu.io.instMem.addr, pcNext)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
 }
 
 class IMM_UnitTester(cpu: Cpu) extends CPU_UnitTester(cpu) {
@@ -312,7 +313,7 @@ class LW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   expect(cpu.io.instMem.addr, cpu.pcInit)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // decode
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -320,7 +321,7 @@ class LW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   poke(cpu.io.instMem.err, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   expect(cpu.io.rf.rs1, 28)
   poke(cpu.io.rf.r1, 0x35C)
   poke(cpu.io.rf.r2, 0x0)
@@ -329,7 +330,7 @@ class LW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   expect(cpu.io.instMem.read, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   expect(cpu.io.alu.x, 0x35C)
   expect(cpu.io.alu.y, 0xFFFFFFECL)
   poke(cpu.io.alu.o, 0x354)
@@ -341,14 +342,14 @@ class LW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   expect(cpu.io.dataMem.write, false)
   expect(cpu.io.dataMem.addr, 0x354)
   poke(cpu.io.dataMem.rdata, SOME_WORD)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // write
   step(1)
   expect(cpu.io.instMem.read, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
   poke(cpu.io.dataMem.err, false)
-  expect(cpu.io.rf.wen, true)
+  expect(cpu.io.rf.write, true)
   expect(cpu.io.rf.rd, 8)
   expect(cpu.io.rf.wdata, SOME_WORD)
   // fetch
@@ -357,7 +358,7 @@ class LW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   expect(cpu.io.instMem.addr, pcNext)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
 }
 
 
@@ -369,7 +370,7 @@ class SW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   expect(cpu.io.instMem.addr, cpu.pcInit)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // decode
   step(1)
   expect(cpu.io.instMem.read, false)
@@ -377,7 +378,7 @@ class SW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   poke(cpu.io.instMem.err, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   poke(cpu.io.rf.r1, 0x234)
   poke(cpu.io.rf.r2, SOME_WORD)
   // execute
@@ -385,7 +386,7 @@ class SW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   expect(cpu.io.instMem.read, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   expect(cpu.io.alu.x, 0x234)
   expect(cpu.io.alu.y, 0xFFFFFFECL)
   poke(cpu.io.alu.o, 0x220)
@@ -397,21 +398,21 @@ class SW_UnitTester(cpu: Cpu) extends PeekPokeTester(cpu) {
   expect(cpu.io.dataMem.write, true)
   expect(cpu.io.dataMem.addr, 0x220)
   expect(cpu.io.dataMem.wdata, SOME_WORD)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // write
   step(1)
   expect(cpu.io.instMem.read, false)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
   poke(cpu.io.dataMem.err, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
   // fetch
   step(1)
   expect(cpu.io.instMem.read, true)
   expect(cpu.io.instMem.addr, pcNext)
   expect(cpu.io.dataMem.read, false)
   expect(cpu.io.dataMem.write, false)
-  expect(cpu.io.rf.wen, false)
+  expect(cpu.io.rf.write, false)
 }
 
 

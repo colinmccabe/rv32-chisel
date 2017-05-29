@@ -4,9 +4,6 @@ object Constants {
   val WIDTH = 32.W
   val INST_MEM_WIDTH = 12.W
   val DATA_MEM_WIDTH = 12.W
-  val U_MAX = Math.pow(2, 32).toLong - 1
-  val S_MAX = Math.pow(2, 31).toLong - 1
-  val S_MIN = -Math.pow(2, 31).toLong
   val INST_ADDR_MASK = (1L << INST_MEM_WIDTH.get) - 1
 
   val OP_LUI = "b0110111".U
@@ -37,6 +34,4 @@ object Constants {
 
   val FUNCT7_0 = "b0000000".U
   val FUNCT7_1 = "b0100000".U
-
-  val SOME_WORD = 12344321
 }
